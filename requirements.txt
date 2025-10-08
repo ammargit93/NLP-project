@@ -8,3 +8,4 @@ langchainhub
 duckduckgo-search
 requests
 transformers
+python-dotenv
