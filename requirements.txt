@@ -2,3 +2,9 @@ scikit-learn
 joblib
 streamlit
 numpy
+huggingface_hub
+langchain
+langchainhub
+duckduckgo-search
+requests
+transformers
