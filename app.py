@@ -111,7 +111,3 @@ if st.button("🔍 Verify Headline", use_container_width=True):
 
 st.markdown("---")
 st.caption("© 2025 Fake News Verifier | Built with Streamlit + Hugging Face")
-
-# Run Streamlit on Render's $PORT automatically
-if __name__ == "__main__":
-    st.run(host="0.0.0.0", port=8502)
