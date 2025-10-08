@@ -82,12 +82,18 @@ def analyze_sentiment(text: str, token: str):
 def detect_fake_news(headline: str, token: str):
     label, score = classify_fake_news(headline, token)
     web_summary = verify_with_web(headline, token)
-    sentiment_label, sentiment_score = analyze_sentiment(web_summary, token)
-    if "negative" in sentiment_label.lower():
-        verdict = "❌ Likely Fake (negative sentiment in sources)"
+    summary_lower = web_summary.lower()
+
+    if any(word in summary_lower for word in ["false", "fake", "not true", "incorrect"]):
+        verdict = "❌ Fake (verified as false)"
+    elif any(word in summary_lower for word in ["true", "confirmed", "verified"]):
+        verdict = "✅ Real (verified as true)"
     else:
-        verdict = "✅ Likely True (neutral or positive coverage)"
-    return label, score, web_summary, sentiment_label, sentiment_score, verdict
+        # fallback to sentiment
+        if "negative" in sentiment_label.lower():
+            verdict = "❌ Likely Fake (negative sentiment in sources)"
+        else:
+            verdict = "✅ Likely True (neutral or positive coverage)"
 
 st.set_page_config(page_title="Fake News Detection", page_icon="📰", layout="wide")
 st.title("📰 Fake News Detection App")
