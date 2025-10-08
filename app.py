@@ -79,24 +79,15 @@ def analyze_sentiment(text: str, token: str):
         label, score = "NEUTRAL", 0.0
     return label, score
 
-
 def detect_fake_news(headline: str, token: str):
     label, score = classify_fake_news(headline, token)
     web_summary = verify_with_web(headline, token)
-
-    # --- Sentiment Analysis ---
     sentiment_label, sentiment_score = analyze_sentiment(web_summary, token)
-
-    # --- Combined Reasoning ---
     if "negative" in sentiment_label.lower():
         verdict = "❌ Likely Fake (negative sentiment in sources)"
-    elif "positive" in sentiment_label.lower() or "neutral" in sentiment_label.lower():
-        verdict = "✅ Likely True (neutral or positive coverage)"
     else:
-        verdict = f"⚠️ Uncertain — Model says {label}"
-
+        verdict = "✅ Likely True (neutral or positive coverage)"
     return label, score, web_summary, sentiment_label, sentiment_score, verdict
-
 
 st.set_page_config(page_title="Fake News Detection", page_icon="📰", layout="wide")
 st.title("📰 Fake News Detection App")
@@ -107,25 +98,20 @@ headline = st.text_area("Enter a news headline to verify:", height=100)
 
 if st.button("🔍 Verify Headline", use_container_width=True):
     if not token:
-        st.error("Please set your HF_TOKEN in the environment variables.")
+        st.error("HF_TOKEN not set in environment variables.")
     elif not headline.strip():
         st.warning("Please enter a headline first.")
     else:
         with st.spinner("Analyzing... please wait ⏳"):
-            label, score, web_summary,  sentiment_label, sentiment_score,verdict = detect_fake_news(headline, token)
-        # st.subheader("🧠 Model Classification")
-        # st.write(f"**Label:** {label}")
-        # st.write(f"**Confidence:** {score:.2f}")
-
+            label, score, web_summary, sentiment_label, sentiment_score, verdict = detect_fake_news(headline, token)
         st.subheader("🌐 Web Verification Summary")
         st.write(web_summary)
-
-        # st.subheader("💬 Sentiment Analysis")
-        # st.write(f"**Sentiment:** {sentiment_label} ({sentiment_score:.2f})")
-
         st.subheader("✅ Final Verdict")
         st.success(verdict)
 
-
 st.markdown("---")
 st.caption("© 2025 Fake News Verifier | Built with Streamlit + Hugging Face")
+
+# Run Streamlit on Render's $PORT automatically
+if __name__ == "__main__":
+    st.run(host="0.0.0.0", port=8502)
